@@ -75,6 +75,9 @@ Layered architecture with clear separation:
 ```
 Tests → Verifications → Page Objects → Common Helpers → Browser Management
 ```
+- This architecture was used to ensure that the Page Objects are not accessible directly to the Test class
+- This architecture ensures that any updates on the Web UI can be easily implemented in the automation framework by simply updating the login_page.robot
+- Any deprecated library functions can be updated by modifying the resource files
 
 ### Key Design Decisions
 
@@ -140,7 +143,7 @@ login_test_framework/
 
 ### AI-Assisted Development
 
-This framework was developed using **Cursor AI with Claude Sonnet 4.5** to accelerate the development process. The AI assisted in:
+This framework was developed using **Cursor AI** to accelerate the development process. The AI assisted in:
 
 - Generating initial test scripts and framework structure
 - Implementing the layered architecture and wrapper pattern
@@ -152,9 +155,10 @@ This framework was developed using **Cursor AI with Claude Sonnet 4.5** to accel
 
 All AI-generated code was thoroughly reviewed, modified, and verified to ensure:
 - Compliance with project requirements and specifications
+- Deciding on the project architecture
+- Deciding what methods to use
 - Proper functionality through hands-on testing
 - Code quality and maintainability standards
-- Best practices for Robot Framework test automation
 - Accurate implementation of test scenarios
 
 The final framework represents a collaborative effort where AI provided rapid prototyping and boilerplate code, while human oversight ensured quality, accuracy, and alignment with specific testing needs.
