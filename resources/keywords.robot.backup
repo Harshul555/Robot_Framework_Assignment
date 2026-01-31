@@ -1,0 +1,271 @@
+*** Settings ***
+Library    SeleniumLibrary
+Library    OperatingSystem
+Library    Collections
+
+*** Variables ***
+# Browser Configuration
+${BROWSER}              Chrome
+${LOGIN_URL}            https://razerid.razer.com/
+${TIMEOUT}              10s
+
+# Main Login Form Elements
+${USERNAME_FIELD}       id=input-login-email
+${PASSWORD_FIELD}       id=input-login-password
+${LOGIN_BUTTON}         xpath=//button[contains(text(), 'LOG IN')]
+${PASSWORD_TOGGLE}      xpath=//button[@aria-label='Show password']
+
+# Links and Navigation
+${FORGOT_PASSWORD_LINK}     xpath=//a[contains(text(), 'Forgot password?')]
+${CREATE_ACCOUNT_LINK}      xpath=//a[contains(text(), 'Create Razer ID')]
+${CREATE_ACCOUNT_TEXT}      xpath=//div[contains(text(), "Don't have an account yet?")]
+
+# Page Heading
+${PAGE_HEADING}         xpath=//h1[contains(text(), 'RAZER ID LOGIN')]
+${SOCIAL_LOGIN_TEXT}    xpath=//*[contains(text(), 'or log in with')]
+
+# Social Login Buttons
+${APPLE_LOGIN_BTN}      xpath=//button[@aria-label='Login with Apple']
+${FACEBOOK_LOGIN_BTN}   xpath=//button[@aria-label='Login with Facebook']
+${GOOGLE_LOGIN_BTN}     xpath=//button[@aria-label='Login with Google']
+${TWITCH_LOGIN_BTN}     xpath=//button[@aria-label='Login with Twitch']
+${WECHAT_LOGIN_BTN}     xpath=//button[@aria-label='Login with WeChat']
+
+# Messages and Notifications
+${SUCCESS_MESSAGE}      xpath=//div[contains(@class, 'success')]
+${ERROR_MESSAGE}        xpath=//div[contains(@class, 'error')]
+
+# Footer Elements
+${FAQ_LINK}             xpath=//a[contains(text(), 'FAQ')]
+${LEGAL_TERMS_LINK}     xpath=//a[contains(text(), 'Legal Terms')]
+${PRIVACY_POLICY_LINK}  xpath=//a[contains(text(), 'Privacy Policy')]
+${COOKIE_SETTINGS_LINK} xpath=//a[contains(text(), 'Cookie Settings')]
+${COPYRIGHT_TEXT}       xpath=//*[contains(text(), 'Copyright')]
+
+# Social Media Icons (Footer)
+${FACEBOOK_ICON}        xpath=//a[@aria-label='Facebook']
+${INSTAGRAM_ICON}       xpath=//a[@aria-label='Instagram']
+${TWITTER_ICON}         xpath=//a[@aria-label='Twitter']
+${YOUTUBE_ICON}         xpath=//a[@aria-label='YouTube']
+${DISCORD_ICON}         xpath=//a[@aria-label='Discord']
+${REDDIT_ICON}          xpath=//a[@aria-label='Reddit']
+
+*** Keywords ***
+Open Browser To Login Page
+    [Documentation]    Opens browser and navigates to login page
+    Open Browser    ${LOGIN_URL}    ${BROWSER}
+    Maximize Browser Window
+    Set Selenium Timeout    ${TIMEOUT}
+    Wait Until Page Contains Element    ${USERNAME_FIELD}
+
+Close Browser Session
+    [Documentation]    Closes the browser session
+    Close Browser
+
+Enter Username
+    [Arguments]    ${username}
+    [Documentation]    Enters username into the username field
+    Wait Until Element Is Visible    ${USERNAME_FIELD}
+    Input Text    ${USERNAME_FIELD}    ${username}
+
+Enter Password
+    [Arguments]    ${password}
+    [Documentation]    Enters password into the password field
+    Wait Until Element Is Visible    ${PASSWORD_FIELD}
+    Input Password    ${PASSWORD_FIELD}    ${password}
+
+Click Login Button
+    [Documentation]    Clicks the login button
+    Wait Until Element Is Visible    ${LOGIN_BUTTON}
+    Click Button    ${LOGIN_BUTTON}
+
+Verify Successful Login
+    [Documentation]    Verifies that login was successful
+    Wait Until Element Is Visible    ${SUCCESS_MESSAGE}    ${TIMEOUT}
+    Element Should Be Visible    ${SUCCESS_MESSAGE}
+    Page Should Contain    Welcome
+
+Verify Failed Login
+    [Documentation]    Verifies that login failed
+    Wait Until Element Is Visible    ${ERROR_MESSAGE}    ${TIMEOUT}
+    Element Should Be Visible    ${ERROR_MESSAGE}
+    Page Should Contain    Invalid credentials
+
+Login With Credentials
+    [Arguments]    ${username}    ${password}
+    [Documentation]    Performs complete login operation
+    Enter Username    ${username}
+    Enter Password    ${password}
+    Click Login Button
+
+Clear Login Form
+    [Documentation]    Clears the login form fields
+    Clear Element Text    ${USERNAME_FIELD}
+    Clear Element Text    ${PASSWORD_FIELD}
+
+Verify Page Title
+    [Arguments]    ${expected_title}
+    [Documentation]    Verifies the page title
+    Title Should Be    ${expected_title}
+
+Wait For Page To Load
+    [Documentation]    Waits for page to fully load
+    Wait Until Element Is Visible    ${LOGIN_BUTTON}    ${TIMEOUT}
+
+Take Screenshot On Failure
+    [Documentation]    Takes screenshot when test fails
+    Run Keyword If Test Failed    Capture Page Screenshot
+
+Get Current Timestamp
+    [Documentation]    Returns current timestamp for unique identifiers
+    ${timestamp}=    Get Time    epoch
+    RETURN    ${timestamp}
+
+# Password Field Keywords
+Toggle Password Visibility
+    [Documentation]    Clicks the show/hide password toggle button
+    Wait Until Element Is Visible    ${PASSWORD_TOGGLE}
+    Click Element    ${PASSWORD_TOGGLE}
+
+Verify Password Is Hidden
+    [Documentation]    Verifies password field is of type 'password'
+    ${type}=    Get Element Attribute    ${PASSWORD_FIELD}    type
+    Should Be Equal    ${type}    password
+
+Verify Password Is Visible
+    [Documentation]    Verifies password field is of type 'text'
+    ${type}=    Get Element Attribute    ${PASSWORD_FIELD}    type
+    Should Be Equal    ${type}    text
+
+# Link Navigation Keywords
+Click Forgot Password Link
+    [Documentation]    Clicks the 'Forgot password?' link
+    Wait Until Element Is Visible    ${FORGOT_PASSWORD_LINK}
+    Click Element    ${FORGOT_PASSWORD_LINK}
+
+Click Create Account Link
+    [Documentation]    Clicks the 'Create Razer ID' link
+    Wait Until Element Is Visible    ${CREATE_ACCOUNT_LINK}
+    Click Element    ${CREATE_ACCOUNT_LINK}
+
+Verify Create Account Text Is Visible
+    [Documentation]    Verifies "Don't have an account yet?" text is visible
+    Wait Until Element Is Visible    ${CREATE_ACCOUNT_TEXT}
+    Element Should Be Visible    ${CREATE_ACCOUNT_TEXT}
+
+# Social Login Keywords
+Login With Apple
+    [Documentation]    Clicks Apple login button
+    Wait Until Element Is Visible    ${APPLE_LOGIN_BTN}
+    Click Element    ${APPLE_LOGIN_BTN}
+
+Login With Facebook
+    [Documentation]    Clicks Facebook login button
+    Wait Until Element Is Visible    ${FACEBOOK_LOGIN_BTN}
+    Click Element    ${FACEBOOK_LOGIN_BTN}
+
+Login With Google
+    [Documentation]    Clicks Google login button
+    Wait Until Element Is Visible    ${GOOGLE_LOGIN_BTN}
+    Click Element    ${GOOGLE_LOGIN_BTN}
+
+Login With Twitch
+    [Documentation]    Clicks Twitch login button
+    Wait Until Element Is Visible    ${TWITCH_LOGIN_BTN}
+    Click Element    ${TWITCH_LOGIN_BTN}
+
+Login With WeChat
+    [Documentation]    Clicks WeChat login button
+    Wait Until Element Is Visible    ${WECHAT_LOGIN_BTN}
+    Click Element    ${WECHAT_LOGIN_BTN}
+
+Verify All Social Login Buttons Are Visible
+    [Documentation]    Verifies all 5 social login buttons are present
+    Wait Until Element Is Visible    ${APPLE_LOGIN_BTN}
+    Element Should Be Visible    ${APPLE_LOGIN_BTN}
+    Element Should Be Visible    ${FACEBOOK_LOGIN_BTN}
+    Element Should Be Visible    ${GOOGLE_LOGIN_BTN}
+    Element Should Be Visible    ${TWITCH_LOGIN_BTN}
+    Element Should Be Visible    ${WECHAT_LOGIN_BTN}
+
+# Page Content Verification Keywords
+Verify Login Page Heading
+    [Documentation]    Verifies 'RAZER ID LOGIN' heading is visible
+    Wait Until Element Is Visible    ${PAGE_HEADING}
+    Element Should Be Visible    ${PAGE_HEADING}
+    Element Text Should Be    ${PAGE_HEADING}    RAZER ID LOGIN
+
+Verify Social Login Text
+    [Documentation]    Verifies 'or log in with' text is visible
+    Wait Until Element Is Visible    ${SOCIAL_LOGIN_TEXT}
+    Element Should Be Visible    ${SOCIAL_LOGIN_TEXT}
+
+# Footer Keywords
+Click FAQ Link
+    [Documentation]    Clicks FAQ link in footer
+    Scroll Element Into View    ${FAQ_LINK}
+    Click Element    ${FAQ_LINK}
+
+Click Legal Terms Link
+    [Documentation]    Clicks Legal Terms link in footer
+    Scroll Element Into View    ${LEGAL_TERMS_LINK}
+    Click Element    ${LEGAL_TERMS_LINK}
+
+Click Privacy Policy Link
+    [Documentation]    Clicks Privacy Policy link in footer
+    Scroll Element Into View    ${PRIVACY_POLICY_LINK}
+    Click Element    ${PRIVACY_POLICY_LINK}
+
+Click Cookie Settings Link
+    [Documentation]    Clicks Cookie Settings link in footer
+    Scroll Element Into View    ${COOKIE_SETTINGS_LINK}
+    Click Element    ${COOKIE_SETTINGS_LINK}
+
+Verify Footer Links Are Visible
+    [Documentation]    Verifies all footer links are present
+    Scroll Element Into View    ${FAQ_LINK}
+    Element Should Be Visible    ${FAQ_LINK}
+    Element Should Be Visible    ${LEGAL_TERMS_LINK}
+    Element Should Be Visible    ${PRIVACY_POLICY_LINK}
+    Element Should Be Visible    ${COOKIE_SETTINGS_LINK}
+
+# Social Media Icons Keywords
+Click Facebook Social Icon
+    [Documentation]    Clicks Facebook icon in footer
+    Scroll Element Into View    ${FACEBOOK_ICON}
+    Click Element    ${FACEBOOK_ICON}
+
+Click Instagram Social Icon
+    [Documentation]    Clicks Instagram icon in footer
+    Scroll Element Into View    ${INSTAGRAM_ICON}
+    Click Element    ${INSTAGRAM_ICON}
+
+Click Twitter Social Icon
+    [Documentation]    Clicks Twitter icon in footer
+    Scroll Element Into View    ${TWITTER_ICON}
+    Click Element    ${TWITTER_ICON}
+
+Click YouTube Social Icon
+    [Documentation]    Clicks YouTube icon in footer
+    Scroll Element Into View    ${YOUTUBE_ICON}
+    Click Element    ${YOUTUBE_ICON}
+
+Click Discord Social Icon
+    [Documentation]    Clicks Discord icon in footer
+    Scroll Element Into View    ${DISCORD_ICON}
+    Click Element    ${DISCORD_ICON}
+
+Click Reddit Social Icon
+    [Documentation]    Clicks Reddit icon in footer
+    Scroll Element Into View    ${REDDIT_ICON}
+    Click Element    ${REDDIT_ICON}
+
+Verify All Social Icons Are Visible
+    [Documentation]    Verifies all social media icons in footer are present
+    Scroll Element Into View    ${FACEBOOK_ICON}
+    Element Should Be Visible    ${FACEBOOK_ICON}
+    Element Should Be Visible    ${INSTAGRAM_ICON}
+    Element Should Be Visible    ${TWITTER_ICON}
+    Element Should Be Visible    ${YOUTUBE_ICON}
+    Element Should Be Visible    ${DISCORD_ICON}
+    Element Should Be Visible    ${REDDIT_ICON}

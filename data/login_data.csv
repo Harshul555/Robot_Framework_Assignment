@@ -1,0 +1,4 @@
+test_case,login_url,username,password,expected_result,expected_message
+TC001,https://razerid.razer.com/,,,,
+TC002,https://razerid.razer.com/,test@razer.com,testcasePassword,success,
+TC003,https://razerid.razer.com/,test@razer.com,wrongPassword,failure,The email and password entered don't match. Please try again.
